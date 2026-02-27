@@ -96,12 +96,12 @@ const createVerificationEmailTemplate = (firstname, verificationUrl) => {
     <body>
       <div class="container">
         <div class="header">
-          <div class="logo">NexaMart</div>
-          <div class="tagline">Your One-Stop Shopping Destination</div>
+          <div class="logo">brightelerning</div>
+          <div class="tagline">Your plateform e-lerning </div>
         </div>
         <div class="content">
           <h2>Hello <span class="highlight">${firstname}</span>!</h2>
-          <p><strong>Thank you for signing up with NexaMart.</strong> We're excited to have you on board!</p>
+          <p><strong>Thank you for signing up with bright elerning.</strong> We're excited to have you on board!</p>
           <p>To complete your registration and verify your email address, please click the button below:</p>
           
           <div style="text-align: center;">
@@ -115,12 +115,12 @@ const createVerificationEmailTemplate = (firstname, verificationUrl) => {
           
           <p><strong>This verification link will expire in 24 hours.</strong></p>
           
-          <p>If you didn't create an account with NexaMart, you can safely ignore this email.</p>
+          <p>If you didn't create an account with bright elerning, you can safely ignore this email.</p>
           
           <p><strong>Best regards,</strong><br>The NexaMart Team</p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} NexaMart. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} bright elerning. All rights reserved.</p>
           <p>This is an automated email, please do not reply.</p>
         </div>
       </div>
@@ -213,12 +213,12 @@ const createPasswordResetTemplate = (firstName, resetUrl) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <h1 class="logo">NexaMart</h1>
+          <h1 class="logo">brigh elerning</h1>
         </div>
         <div class="content">
           <h2 class="welcome-text">Password Reset Request</h2>
           <p>Hello ${firstName},</p>
-          <p>We received a request to reset your password for your NexaMart account.</p>
+          <p>We received a request to reset your password for your bright elerning account.</p>
           
           <div class="alert-box">
             <strong>⚠️ IMPORTANT:</strong> If you didn't request this password reset, please:
@@ -285,9 +285,9 @@ const sendVerificationEmail = async (email, name, verificationUrl) => {
 
 const sendPasswordResetEmail = async (email, firstName, resetUrl) => {
   const mailOptions = {
-    form: `"brightelerning Security" <${process.env.SMTP_USER}> `,
+    from: `"brightelerning Security" <${process.env.SMTP_USER}> `,
     to: email,
-    subject: "🔏🔒  Passord Reset Request - Action Required",
+    subject: "🔏🔒  Password Reset Request - Action Required",
     html: createPasswordResetTemplate(firstName, resetUrl),
   };
   await transporter.sendMail(mailOptions);
