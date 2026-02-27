@@ -2,6 +2,7 @@ const express= require('express');
 const dotenv=require('dotenv');
 const cors=require('cors');
 const connectDB=require("./config/db");
+const useragent=require('express-useragent');
 const app=express();
 
 dotenv.config();
@@ -12,6 +13,10 @@ app.use(express.json());
 
 //connectin data base 
 connectDB();
+//adding useragent middleware
+app.use(useragent.express());
+//routes
+app.use('/api/auth', require('./routes/auth'))
 
 
 
