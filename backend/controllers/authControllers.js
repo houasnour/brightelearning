@@ -29,8 +29,13 @@ const getDeviceInfo = (req) => {
 
 // Register User
 //routes POST /api/auth/register
-
 exports.register = async (req, res) => {
+    // 🔹 LOG pour debug
+    console.log("=== Début de l'inscription ===");
+    console.log("Body reçu :", req.body);             // montre tout ce que le frontend envoie
+    console.log("Headers reçus :", req.headers);      // montre les headers, utile pour user-agent, IP etc.
+    console.log("IP du client :", req.ip);
+    
     try {
         const {
             firstName,
@@ -39,6 +44,13 @@ exports.register = async (req, res) => {
             password,
             phoneNumber1,
         } = req.body;
+
+        // Vérifie si toutes les données sont présentes
+        if (!firstName || !lastName || !email || !password) {
+            console.warn("Données manquantes !");
+            return res.status(400).json({ success: false, message: "Tous les champs sont requis" });
+        }
+
         //check if user exists
         const userExists = await User.findOne({ email });
         if (userExists) {
@@ -62,11 +74,11 @@ exports.register = async (req, res) => {
             verificationToken,
             verificationTokenExpire,
         });
-        //Creation of verification URL
+        // //Creation of verification URL
         const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
         //send verification email
         await sendVerificationEmail(email, firstName, verificationUrl);
-        //Log user activity
+        //Log user activity 
         const deviceInfo = getDeviceInfo(req);
         await UserActivity.create({
             user: user._id,
@@ -171,7 +183,6 @@ exports.login = async (req, res) => {
 
 //Refresh access token
 //routes POST /api/auth/refresh-token
-
 exports.refreshToken = async (res, req) => {
     try {
         //extract the refresh token
