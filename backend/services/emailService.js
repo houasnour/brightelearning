@@ -251,7 +251,7 @@ const createPasswordResetTemplate = (firstName, resetUrl) => {
           </p>
         </div>
         <div class="footer">
-          <p>© ${new Date().getFullYear()} NexaMart. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} Bright elerning. All rights reserved.</p>
           <p>This email was sent to you because a password reset was requested for your account.</p>
           <p>If you have any concerns, please contact our support team immediately.</p>
         </div>
