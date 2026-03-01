@@ -7,13 +7,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please add a first name"],
         trim: true,
-        maxLength: [25, "Full name cannot be more than 25 characters"]
+        maxLength: [25, "First name cannot be more than 25 characters"]
     },
     lastName: {
         type: String,
         required: [true, "Please add a last name"],
         trim: true,
-        maxLength: [25, "Full name cannot be more than 25 characters"]
+        maxLength: [25, "Last name cannot be more than 25 characters"]
     },
     email: {
         type: String,
@@ -132,18 +132,20 @@ const userSchema = new mongoose.Schema({
 
 
 // Encrypt password using bcrypt
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
+
     if (this.password && this.isModified("password")) {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         this.isPasswordSet = true;
     }
-    // Set IsEmailValid to true for social login
+
+    // Set isEmailVerified to true for social login
     if (this.socialProvider) {
         this.isEmailVerified = true;
     }
-    next();
-})
+
+});
 
 userSchema.methods.linkSocialAccount = async function (provider, providerID) {
     this[`${provider}Id`] = providerID;

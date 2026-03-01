@@ -16,7 +16,7 @@ exports.loginLimiter = rateLimit({
 
 exports.registerLimiter = rateLimit({
     windowMs : 60 * 60 * 1000, //1 hour in milliseconds
-    max : 5, // Max 5 accounts per hour
+    max : 15, // Max 5 accounts per hour
     message :{
         success : false,
         message : "Too many accounts created. Please try again after an hour"

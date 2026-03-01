@@ -117,7 +117,7 @@ const createVerificationEmailTemplate = (firstname, verificationUrl) => {
           
           <p>If you didn't create an account with bright elerning, you can safely ignore this email.</p>
           
-          <p><strong>Best regards,</strong><br>The NexaMart Team</p>
+          <p><strong>Best regards,</strong><br>Bright elerning Team</p>
         </div>
         <div class="footer">
           <p>&copy; ${new Date().getFullYear()} bright elerning. All rights reserved.</p>
