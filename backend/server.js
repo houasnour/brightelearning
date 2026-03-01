@@ -27,3 +27,9 @@ app.listen(PORT,()=>{
     console.log(`server started at port${PORT}`);
 
 });
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED REJECTION:", err);
+});
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err);
+});

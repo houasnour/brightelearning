@@ -1,12 +1,18 @@
 const { check, validationResult } = require("express-validator");
 
 exports.validatorRegister = [
-    check("fullName")
+    check("firstName")
         .trim()
         .notEmpty()
-        .withMessage("Full Name is required")
+        .withMessage("First Name is required")
         .isLength({ max: 25 })
         .withMessage("First Name should not exceed 25 characters"),
+    check("lastName")
+        .trim()
+        .notEmpty()
+        .withMessage("Last Name is required")
+        .isLength({ max: 25 })
+        .withMessage("Last Name cannot be more than 25 characters"),
     check("email")
         .trim()
         .notEmpty()

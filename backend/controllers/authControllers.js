@@ -10,7 +10,8 @@ const authTemplates = require('../services/authTemplates');
 
 // function to get device info
 const getDeviceInfo = (req) => {
-    const ua = useragent.parse(req.headers[("user-agent")]);
+    const ua = req.useragent;
+
     return {
         browser: {
             name: ua.browser,
@@ -18,19 +19,25 @@ const getDeviceInfo = (req) => {
         },
         os: {
             name: ua.os,
-            version: ua.os_version || "Unknown",
+            version: ua.platform || "Unknown",
         },
         device: ua.isMobile ? "Mobile" : "Desktop",
         isMobile: ua.isMobile,
-        isDesktop: !ua.isMobile,
+        isDesktop: ua.isDesktop,
         isTablet: ua.isTablet,
     };
 };
+
 
 // Register User
 //routes POST /api/auth/register
 
 exports.register = async (req, res) => {
+    // 🔹 LOG pour debug
+    console.log("=== Début de l'inscription ===");
+    console.log("Body reçu :", req.body);             // montre tout ce que le frontend envoie
+    console.log("Headers reçus :", req.headers);      // montre les headers, utile pour user-agent, IP etc.
+    console.log("IP du client :", req.ip);
     try {
         const {
             firstName,
@@ -38,6 +45,9 @@ exports.register = async (req, res) => {
             email,
             password,
             phoneNumber1,
+            phoneNumber2,
+            deliveryAddress1,
+            deliveryAddress2,
         } = req.body;
         //check if user exists
         const userExists = await User.findOne({ email });
@@ -59,6 +69,9 @@ exports.register = async (req, res) => {
             email,
             password,
             phoneNumber1,
+            phoneNumber2,
+            deliveryAddress1,
+            deliveryAddress2,
             verificationToken,
             verificationTokenExpire,
         });
@@ -87,13 +100,12 @@ exports.register = async (req, res) => {
             message: "Registration successful, Please check your email to verify your account."
         })
 
-    } catch (error) {
-        console.error("Registration error : ", error)
-        res.status(500).json({
-            success: false,
-            message: "An error occured during registration"
-        })
-    }
+    }  catch (error) {
+    console.error("Registration error :", error); // 🔹 affiche l'erreur complète
+    res.status(500).json({
+        success: false,
+        message: error.message || "An error occured during registration"
+    });}
 }
 
 //Login
@@ -172,7 +184,7 @@ exports.login = async (req, res) => {
 //Refresh access token
 //routes POST /api/auth/refresh-token
 
-exports.refreshToken = async (res, req) => {
+exports.refreshToken = async (req, res) => {
     try {
         //extract the refresh token
         const { refreshToken } = req.body;
@@ -467,19 +479,6 @@ exports.googleCallback = (req,res,next) => {
         // Send success page
         res.send(authTemplates.successPage(user,token));
 
-        /* Front end redirect code (kept for later use)
-        if(req.headers.accept?.includes("application/json")){
-            return res.json({
-                success : true,
-                token,
-                user : {
-                    id : user._id,
-                    email : user.email,
-                    isProfileComplete : user.isProfileComplete,
-                }
-            });
-        }
-            res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
-        */
+     
     }) (req,res,next);
 }
