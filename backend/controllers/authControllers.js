@@ -45,9 +45,6 @@ exports.register = async (req, res) => {
             email,
             password,
             phoneNumber1,
-            phoneNumber2,
-            deliveryAddress1,
-            deliveryAddress2,
         } = req.body;
         //check if user exists
         const userExists = await User.findOne({ email });
