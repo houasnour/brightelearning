@@ -69,9 +69,6 @@ exports.register = async (req, res) => {
             email,
             password,
             phoneNumber1,
-            phoneNumber2,
-            deliveryAddress1,
-            deliveryAddress2,
             verificationToken,
             verificationTokenExpire,
         });
@@ -122,23 +119,27 @@ exports.login = async (req, res) => {
         if (!user) {
             return res.status(401).json({ success: false, message: "Invalid credentials" });
         }
+//check password
+const isMatch = await user.matchPassword(password);
 
-        //check password
-        const isMatch = await user.matchPassword(password);
-        if (!isMatch) {
-            //Log failed login attempt
-            await UserActivity.create({
-                user: user._id,
-                action: "LOGIN",
-                metadata: {
-                    ip: req.ip,
-                    userAgent: req.headers["user-agent"],
-                    ...getDeviceInfo(req),
-                    status: "FAILED",
-                    details: "Invalid password",
-                }
-            })
-        }
+if (!isMatch) {
+    await UserActivity.create({
+        user: user._id,
+        action: "LOGIN",
+        metadata: {
+            ip: req.ip,
+            userAgent: req.headers["user-agent"],
+            ...getDeviceInfo(req),
+            details: "Invalid password",
+        },
+        status: "FAILED"
+    });
+
+    return res.status(401).json({
+        success: false,
+        message: "Invalid credentials"
+    });
+}
         //Check email verification
         if (!user.isEmailVerified) {
             return res.status(401).json({ success: false, message: "Please verify your email first" });
@@ -173,12 +174,15 @@ exports.login = async (req, res) => {
 
 
     } catch (error) {
-        console.error("Login error : ", error)
-        res.status(500).json({
-            success: false,
-            message: "An error occured during Login"
-        })
-    }
+    console.error("🔥 LOGIN ERROR FULL:");
+    console.error(error);
+    console.error("STACK:", error.stack);
+
+    res.status(500).json({
+        success: false,
+        message: error.message
+    });
+}
 }
 
 //Refresh access token
@@ -336,6 +340,7 @@ exports.resendVerification = async (req, res) => {
         //Send new verification email
         const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
         await sendVerificationEmail(user.email, user.firstName, verificationUrl);
+        
         res.status(200).json({
             success: true,
             message: "Verification email resent successfully"
@@ -368,7 +373,7 @@ exports.forgotPassword = async (req, res) => {
         await user.save();
         //Create reset url
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-        await sendPasswordResetEmail(user.email, user.name, resetUrl);
+        await sendPasswordResetEmail(user.email, user.firstName, resetUrl);
         //Activity log
         await UserActivity.create({
             user: user._id,
